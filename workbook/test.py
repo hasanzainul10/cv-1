@@ -1,3 +1,8 @@
-# import only chosen part of a module
-from myFirstModule import person1
-print(person1["age"])
+from hasanPackage import FileHandling
+
+fn = "last.txt"
+str= "This is written and will be read"
+
+FileHandling.creating(fn)
+FileHandling.writing(fn,str)
+FileHandling.reading(fn)

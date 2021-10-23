@@ -1,5 +1,5 @@
 def creating(fn):
-    f =open(fn,'x')
+    f =open(fn,'w')
 
 def writing(fn,str):
     f =open(fn,'w')
