@@ -24,14 +24,16 @@ def create_data():
     list_of_number = cv.vconcat(list_of_numbers_arr)
     return list_of_number
 
-def generate_num_img(list_of_num,number=1234,random=False,random_len=4):
-    if not random:
+
+def generate_num_img(list_of_num, number=1234, use_random=False, random_len=4):
+    np.random.seed(2)
+    if not use_random:
         number = number
-    elif random:
+    elif use_random:
         digit_list_min = []
         digit_list_max = []
-        for i in range(0,random_len,1):
-            if i == 0 :
+        for i in range(0, random_len, 1):
+            if i == 0:
                 digit_list_min.append(1)
                 digit_list_max.append(9)
             else:
@@ -40,11 +42,13 @@ def generate_num_img(list_of_num,number=1234,random=False,random_len=4):
         strings = [str(integer) for integer in digit_list_min]
         a_string = "".join(strings)
         min_random = int(a_string)
+        print("min_random", min_random)
 
         strings = [str(integer) for integer in digit_list_max]
         a_string = "".join(strings)
         max_random = int(a_string)
-        number = np.random.randint(min_random,max_random)
+        print("max_random",max_random)
+        number = np.random.randint(min_random, max_random, dtype='int64')
     number = str(number)
     number = list(number)
     print(len(number))
@@ -63,7 +67,8 @@ def generate_num_img(list_of_num,number=1234,random=False,random_len=4):
         # img=cv.resize(img,(20,20))
         num_img_parts.append(img)
     num_img = cv.hconcat(num_img_parts)
-    cv.imwrite("number_image.jpg",num_img)
+    cv.imwrite("number_image.jpg", num_img)
+    return number
     # plt.imshow(num_img)
     # plt.show()
 

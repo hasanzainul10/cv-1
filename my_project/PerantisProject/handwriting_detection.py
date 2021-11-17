@@ -2,6 +2,7 @@ import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 import create_data
+from sklearn import metrics as metrics
 
 
 def knn_model():
@@ -71,7 +72,7 @@ def knn_model():
     return knn
 
 
-def test_handwriting(filename, knn):
+def test_handwriting(filename, knn, numbers_list):
     imgGray = cv.imread(filename, cv.IMREAD_GRAYSCALE)
 
     print("Image shape:", imgGray.shape)
@@ -92,6 +93,7 @@ def test_handwriting(filename, knn):
 
     # convert list to np.array
     digits = np.array(digits)
+
     print('digits', digits.shape)
 
     # labels
@@ -100,26 +102,37 @@ def test_handwriting(filename, knn):
     labels = np.repeat(np.arange(DIGITS_CLASS), repeatNum)
     print('labels', labels.shape)
 
-    own_features = []
+    features = []
     for digit in digits:
         img_pixel = np.float32(digit.flatten())
-        own_features.append(img_pixel)
+        features.append(img_pixel)
 
-    own_features = np.squeeze(own_features)
-    print('features', own_features.shape)
+    features = np.squeeze(features)
+    print('features', features.shape)
+
+    new_features = np.asarray(features)
+    print("New features shape: ", new_features.shape)
+    numbers_list = [float(i) for i in numbers_list]
+    labels1 = np.array(numbers_list)
+    print('Labels shape: ', labels1.shape)
+    print("labels1", labels1.shape)
+    print()
+
     k = 4
-    ret, prediction, neighbours, dist = knn.findNearest(own_features, k)
+    ret, prediction, neighbours, dist = knn.findNearest(new_features, k)
 
     # Compute the accuracy:
-    a = prediction.flatten()
-    b = np.squeeze(prediction).flatten()
-    c = (a == b)
-    # c = list(c)
-    print(c)
-    accuracy = c.mean() * 100
 
-    print("Accuracy of own handwriting: {}".format(accuracy))
-    print(prediction.flatten())
+    accuracy = (np.squeeze(prediction) == labels1).mean() * 100
+    # print("labels1 ",labels1)
+    # print(type(labels1))
+    #
+    # print(type(prediction))
+    # accuracy = metrics.accuracy_score(labels1,prediction) * 100
+
+    print("predictions: ", prediction.flatten())
+    print("Accuracy of  handwriting: {}".format(accuracy))
+
     print()
 
 
@@ -138,85 +151,43 @@ def main():
         random = True
         random_len = int(input("Enter length of random number.\n"))
 
+    numbers_list = create_data.generate_num_img(list_num, number=number, use_random=random, random_len=random_len)
 
-    create_data.generate_num_img(list_num, number=number, random=random, random_len=random_len)
-
-    test_handwriting("number_image.jpg", knn)
+    test_handwriting("number_image.jpg", knn, numbers_list)
     img = cv.imread("number_image.jpg")
     img = img[:, :, ::-1]
     plt.imshow(img)
     plt.show()
 
+
+def sequence(knn, list_num):
+    sequence_of_numbers = input(
+        "enter sequence of number separated by space, use -n where n is number of digit for random number:\n")
+    numbers = sequence_of_numbers.split()
+    numbers = [int(i) for i in numbers]
+    print(numbers)
+    for i in range(0, len(numbers), 1):
+        if numbers[i] < 0:
+            numbers[i] = -1*numbers[i]
+            random = True
+
+            random_len = len(str(numbers[i]))
+        else:
+            random = False
+            random_len = 4
+
+        numbers_list = create_data.generate_num_img(list_num, number=numbers[i], use_random=random,
+                                                    random_len=random_len)
+
+        test_handwriting("number_image.jpg", knn, numbers_list)
+        img = cv.imread("number_image.jpg")
+        img = img[:, :, ::-1]
+        plt.imshow(img)
+        plt.show()
+
+
 if __name__ == "__main__":
-    main()
-
-# [features, labels, knn,digits] = model_and_dataset()
-# num_of_digits = 4
-# random_num_img = random_handwritten_number(num_of_digits, 'features.jpg')
-# cv.imwrite("random_digits.jpg", random_num_img)
-# arr = labels.flatten()
-# (condition) = np.where(arr == 1)
-# print(condition)
-# print(type(condition))
-# list_of_index = list(condition)[0]
-# print("x ",x)
-# print("y ",y)
-# width,height =
-# print(list_of_index)
-# print(len(list_of_index))
-# i = np.random.randint(len(list_of_index))
-# print("i ",i)
-# arr2 = features.tolist()
-# arr2 = features
-# img = arr2[i:i+20,i:i+20]
-#
-# plt.imshow(img)
-# plt.show()
-# img = arr2[i]
-# print(arr2)
-# print(arr2[-1])
-# print(len(list_of_index))
-# print("image",img)
-# plt.imshow(img)
-# plt.show()
-# test_handwriting("random_num_img.jpg", num_of_digits)
-# img=cv.imread("random_num_img.jpg")
-# img = img[:,:,::-1]
-# plt.imshow(img)
-# plt.show()
-
-
-# [features, labels, knn,digits] = model_and_dataset()
-# # num_of_digits = 4
-# # random_num_img = random_handwritten_number(num_of_digits, 'features.jpg')
-# # cv.imwrite("random_digits.jpg", random_num_img)
-# arr = labels.flatten()
-# (condition) = np.where(arr == 1)
-# # print(condition)
-# print(type(condition))
-# list_of_index = list(condition)[0]
-# # print("x ",x)
-# # print("y ",y)
-# # width,height =
-# print(list_of_index)
-# print(len(list_of_index))
-# i = np.random.randint(len(list_of_index))
-# print("i ",i)
-# # arr2 = features.tolist()
-# arr2 = features
-# img = arr2[i:i+20,i:i+20]
-#
-# plt.imshow(img)
-# plt.show()
-# # img = arr2[i]
-# # print(arr2)
-# # print(arr2[-1])
-# # print(len(list_of_index))
-# # print("image",img)
-# # plt.imshow(img)
-# # plt.show()
-# # test_handwriting("random_num_img.jpg", num_of_digits)
-# # img=cv.imread("random_num_img.jpg")
-# # img = img[:,:,::-1]
-# # plt.imshow(img)
-# # plt.show()
+    knn = knn_model()
+    list_num = create_data.create_data()
+    sequence(knn, list_num)
+    # main()
