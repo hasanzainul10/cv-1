@@ -1,3 +1,5 @@
+import math
+
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -119,7 +121,9 @@ def test_handwriting(filename, knn, numbers_list):
     print()
 
     k = 4
+
     ret, prediction, neighbours, dist = knn.findNearest(new_features, k)
+
 
     # Compute the accuracy:
 
@@ -160,23 +164,28 @@ def main():
     plt.show()
 
 
-def sequence(knn, list_num):
-    sequence_of_numbers = input(
-        "enter sequence of number separated by space, use -n where n is number of digit for random number:\n")
+def sequence():
+    knn = knn_model()
+    list_num = create_data.create_data()
+    print("\nProgram starting..\n")
+    sequence_of_numbers = input("enter sequence of number separated by space, alternatively use -n where n is number "
+                                "of digit for random number:\n")
     numbers = sequence_of_numbers.split()
     numbers = [int(i) for i in numbers]
     print(numbers)
     for i in range(0, len(numbers), 1):
         if numbers[i] < 0:
-            numbers[i] = -1*numbers[i]
+            number = math.sqrt(pow(numbers[i],2))
+            print(number)
             random = True
+            random_len = int(number)
 
-            random_len = len(str(numbers[i]))
-        else:
+        else :
+            number = numbers[i]
             random = False
             random_len = 4
 
-        numbers_list = create_data.generate_num_img(list_num, number=numbers[i], use_random=random,
+        numbers_list = create_data.generate_num_img(list_num, number=number, use_random=random,
                                                     random_len=random_len)
 
         test_handwriting("number_image.jpg", knn, numbers_list)
@@ -187,7 +196,6 @@ def sequence(knn, list_num):
 
 
 if __name__ == "__main__":
-    knn = knn_model()
-    list_num = create_data.create_data()
-    sequence(knn, list_num)
+
+    sequence()
     # main()
