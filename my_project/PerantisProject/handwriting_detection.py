@@ -1,9 +1,11 @@
 import math
+import time
 
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 import create_data
+import time
 from sklearn import metrics as metrics
 
 
@@ -71,6 +73,16 @@ def knn_model():
     print('Training KNN model')
     knn = cv.ml.KNearest_create()
     knn.train(featureTrain, cv.ml.ROW_SAMPLE, labelTrain)
+
+    start = time.time()
+    k = 1
+    ret, prediction, neighbours, dist = knn.findNearest(featureTest, k)
+
+    # Compute the accuracy:
+    accuracy = (np.squeeze(prediction) == labelTest).mean() * 100
+    end = time.time()
+    exec_time = end - start
+    print("kernel : ",k," accuracy : ",accuracy," execution_time : ",exec_time )
     return knn
 
 
@@ -120,7 +132,7 @@ def test_handwriting(filename, knn, numbers_list):
     print("labels1", labels1.shape)
     print()
 
-    k = 4
+    k = 10
 
     ret, prediction, neighbours, dist = knn.findNearest(new_features, k)
 
@@ -173,6 +185,7 @@ def sequence():
     numbers = sequence_of_numbers.split()
     numbers = [int(i) for i in numbers]
     print(numbers)
+
     for i in range(0, len(numbers), 1):
         if numbers[i] < 0:
             number = math.sqrt(pow(numbers[i],2))
@@ -196,6 +209,10 @@ def sequence():
 
 
 if __name__ == "__main__":
-
-    sequence()
+    i = "y"
+    while i == "y":
+        sequence()
+        y = input("continue?(y/n)")
+        if y != "y":
+            break
     # main()

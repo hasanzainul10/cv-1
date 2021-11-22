@@ -137,10 +137,11 @@ def image(path):
     cv.waitKey(0)
 
 
-choice = int(input("1. Use image input\n2. Use video input.\n3. Use camera video input."))
+choice = int(input("1. Use image input\n2. Use video input.\n3. Use camera video input.\n"))
 if choice == 1:
     path = str(input("Enter image path."))
     # data/face.JPG
+    # data/zoom.jpeg
     image(path=path)
 elif choice == 2:
     path = str(input("Enter video path."))
